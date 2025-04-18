@@ -18,15 +18,14 @@ class BaseQuestion:
     def request(self, model: LLMChat, inputs: List[Message], **kwargs) -> List[str]:
         n = kwargs.get("n", 1)
         answers = []
-        usage = None
         while len(answers) < n:
-            responses, usage = model.chat(messages=inputs, n=n-len(answers))
+            responses = model.chat(messages=inputs, n=n-len(answers))
             answers += responses
-        return answers, usage
+        return answers
 
     def run(self, model: LLMChat, inputs: List[Message], extraction_function, **kwargs) -> str:
         n = kwargs.get("n", 1)
         key = kwargs.get("key")
 
-        answers, usage = self.request(model, inputs, n=n)
-        return Solution(copy.deepcopy(self), answers, usage=usage)
+        answers = self.request(model, inputs, n=n)
+        return Solution(copy.deepcopy(self), answers)

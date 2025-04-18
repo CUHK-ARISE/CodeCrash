@@ -8,13 +8,12 @@ def json_serial(obj):
         return obj.isoformat()
 
 class Solution:
-    def __init__(self, task_id: str, dataset: str, input_prompt: str, solutions: list[set[str, str]], output_format: dict, usage: dict = None) -> None:
+    def __init__(self, task_id: str, dataset: str, input_prompt: str, solutions: list[set[str, str]], output_format: dict) -> None:
         self.task_id = task_id
         self.dataset = dataset
         self.input_prompt = input_prompt
         self.solutions = solutions
         self.output_format = output_format
-        self.usage = usage
 
     def save_lcb(self, file_name: str) -> None:
         answer_key = {
@@ -40,8 +39,6 @@ class Solution:
                 "output_list": list(output_list),
                 answer_key: list(answer_list),
             }
-            if self.usage:
-                entry["usages"] = self.usage
             existing_data.append(entry)
 
         with open(file_path, "w") as file:
@@ -77,8 +74,6 @@ class Solution:
                 "output_list": list(output_list),
                 "answer_list": list(answer_list),
             }
-            if self.usage:
-                entry["usages"] = self.usage
             existing_record.append(entry)
         
         with open(data_file_path, "w") as file:

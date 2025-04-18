@@ -6,7 +6,7 @@ from .format import Message
 from .openai_api import OpenAIChat
 
 # Platform APIs
-from llm.platform_api import AzureChat, DeepInfraChat, OpenKeyChat, DeepSeekChat, GeminiChat, QwenChat
+from llm.platform_api import AzureChat, DeepInfraChat, DeepSeekChat, GeminiChat, QwenChat
 from llm.api.anthropic_api import AnthropicChat
 
 
@@ -18,7 +18,6 @@ __all__ = [
     
     "AzureChat",
     "DeepInfraChat",
-    "OpenKeyChat",
     "DeepSeekChat",
     "GeminiChat",
     "QwenChat",

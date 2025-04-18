@@ -83,7 +83,7 @@ class PredictionQuestion(BaseQuestion):
                   Message(role="user", content=input_prompt)]
 
         solutions = []
-        responses, usage = self.request(model, inputs, **kwargs)
+        responses = self.request(model, inputs, **kwargs)
         for response in responses:
             extracted_content = extract_content(response)
             if extracted_content is not None:
@@ -94,7 +94,7 @@ class PredictionQuestion(BaseQuestion):
                 answer = "No Answer"
             solutions.append((response, answer))
         
-        return Solution(self.task_id, self.dataset, input_prompt, solutions, self.output_format, usage=usage)
+        return Solution(self.task_id, self.dataset, input_prompt, solutions, self.output_format)
     
     
     """
@@ -180,7 +180,7 @@ class PredictionQuestion(BaseQuestion):
                   Message(role="user", content=input_prompt)]
 
         while True:
-            response = self.request(model, inputs, n=1)[0][0]
+            response = self.request(model, inputs, n=1)[0]
             new_expression = extract_content(response, "EXPRESSION")
             passed, e = verify_correctness(new_expression, self.code)
             

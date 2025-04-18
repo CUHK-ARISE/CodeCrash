@@ -48,7 +48,7 @@ class Runner:
         """
         n = kwargs.pop("n", 1)
         os.makedirs(f"results/{self.folder}", exist_ok=True)
-        results_path = f"results/{self.folder}/{file_name}.{self.format}"
+        results_path = f"results/{self.folder}/{file_name}.json"
         rest_count = self.dataset.load_saved_execution(results_path, n)
         
         rest_questions = [

@@ -175,3 +175,7 @@ cython_debug/
 
 # Apple macOS
 .DS_Store
+
+# folder
+results
+logs

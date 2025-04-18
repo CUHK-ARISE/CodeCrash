@@ -11,6 +11,19 @@ class LiveCodeBench(QuestionDataset):
     @classmethod
     def load_file(self, file_path: str) -> "LiveCodeBench":
         return super().load_file(file_path, PredictionQuestion)
+    
+    @classmethod
+    def load_perturb(cls, perturb_tag, task: str = "output") -> "LiveCodeBench":
+        if task not in ["output"]:
+            raise ValueError(f"Invalid task: {task}. Must be 'output'.")
+        ins = cls()
+        if perturb_tag == "VAN":
+            return ins
+        else:
+            path = "CUHK-ARISE/CodeCrash"
+            data = load_dataset(path, data_files=f"lcb_{perturb_tag}_{task}.jsonl")
+            ins.questions_list = [PredictionQuestion.from_dict(entry) for entry in data["train"]]
+        return ins
 
     def load(self, **kwargs) -> list[dict]:
         data = load_dataset("livecodebench/execution-v2")
