@@ -85,7 +85,7 @@ see `demo.ipynb`
 @article{lam2025codecrash,
   title={CodeCrash: Stress Testing LLM Reasoning under Structural and Semantic Perturbations},
   author={Man Ho, Lam and Chaozheng, Wang and Jen-tse Huang and Michael R., Lyu},
-  journal={arXiv preprint arXiv:-},
+  journal={arXiv preprint arXiv:2504.14119},
   year={2025}
 }
 ```
