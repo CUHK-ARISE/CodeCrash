@@ -83,9 +83,9 @@ see `demo.ipynb`
 
 ```bibtex
 @article{lam2025codecrash,
+  author={Man Ho Lam and Chaozheng Wang and Jen{-}tse Huang and Michael R. Lyu},
   title={CodeCrash: Stress Testing LLM Reasoning under Structural and Semantic Perturbations},
-  author={Man Ho, Lam and Chaozheng, Wang and Jen-tse Huang and Michael R., Lyu},
-  journal={arXiv preprint arXiv:2504.14119},
+  journal={arXiv Preprint: 2504.14119},
   year={2025}
 }
 ```
