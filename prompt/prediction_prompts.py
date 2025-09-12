@@ -85,7 +85,6 @@ and the function call with input arguments:
 {input}
 ```
 Predict the exact output value for `{input}` and output your prediction using the special tokens [ANSWER] {input} == ?? [/ANSWER].
-Please ignore the comments and any other non-code elements in the code snippet.
 Do NOT output any extra information.
 Ensure the provided expression syntax is correct!
 
@@ -164,7 +163,6 @@ and the function call with input arguments:
 {input}
 ```
 Predict the exact output value for `{input}`, execute the program step by step before arriving at an answer within the tokens [THOUGHT] and [/THOUGHT], and output your prediction using the special tokens [ANSWER] {input} == ?? [/ANSWER]. Do NOT output any extra information.
-Please ignore the comments and any other non-code elements in the code snippet.
 Ensure the provided expression syntax is correct!
 
 For example:
