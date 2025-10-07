@@ -8,22 +8,15 @@ from llm import LLMChat, Message
 
 class OpenAIChat(LLMChat):
     def __init__(self, model_name: str, client: Optional[OpenAI] = None, **kwargs) -> None:
-        openai_client = OpenAI(
-            api_key=os.getenv("OPENAI_API_KEY"),
-        )
+        if client is None:
+            openai_client = OpenAI(
+                api_key=os.getenv("OPENAI_API_KEY"),
+            )
         self.client = client or openai_client
         super().__init__(model_name, **kwargs)
     
     def get_msg(self, messages: List[Message]) -> List[dict]:
-        message_list = []
-        system_content = ""
-        for msg in messages:
-            if self.no_system_prompt and msg.role == "system":
-                system_content = msg.content.strip()
-            else:
-                msg.content = system_content + "\n\n" + msg.content
-                message_list.append(msg.to_openai_format())
-                system_content = ""
+        message_list = [msg.to_openai_format() for msg in messages]
         return message_list
     
     def chat_generic(self, input_prompt: List[dict], n: int) -> List[str]:
@@ -35,7 +28,8 @@ class OpenAIChat(LLMChat):
         self.write_records(responses.choices[0].message.content, title="RESPONSE")
         time.sleep(self.delay)        
         return [c.message.content for c in responses.choices]
-
+    
+    
     def chat_streaming(self, input_prompt: List[dict], n: int, stream_print: bool) -> List[str]:
         response_stream = self.client.chat.completions.create(
             model=self.model_name,
@@ -68,21 +62,11 @@ class OpenAIChat(LLMChat):
         else:
             return [f"<think>{reasoning_content}</think>\n\n{response_content}"]
     
-    def chat_reasoning(self, input_prompt: List[dict], n: int) -> List[str]:
-        response = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=input_prompt,
-            reasoning_effort=self.effort,
-            **self.get_openai_conf(n=n),
-        )
-        return [response.choices[0].message.content]
     
     def chat(self, messages: List[Message], n: int = 1, stream_print: bool = False) -> List[str]:
         input_prompt = self.get_msg(messages)
         self.write_records(messages[-1].content, title="INPUT")
         if self.stream:
             return self.chat_streaming(input_prompt, n, stream_print)
-        elif self.reasoning:
-            return self.chat_reasoning(input_prompt, n)
         else:
             return self.chat_generic(input_prompt, n)

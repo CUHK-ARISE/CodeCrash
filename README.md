@@ -1,5 +1,5 @@
 # CodeCrash
-Official repository for the paper "CodeCrash: Stress Testing LLM Reasoning under Structural and Semantic Perturbations"
+Official repository for the paper "CodeCrash: Stress-Testing LLM Code Reasoning under Misleading Natural Language Perturbations"
 
 <p align="center">
     <a href="https://cuhk-arise.github.io/CodeCrash/">🏠 Home Page</a> •
@@ -7,85 +7,138 @@ Official repository for the paper "CodeCrash: Stress Testing LLM Reasoning under
     <a href="https://cuhk-arise.github.io/CodeCrash/leaderboard">🏆 Leaderboard</a>
 </p>
 
-## Introduction
-CodeCrash provides a unified stress-testing benchmark for evaluating the robustness of Large Language Models (LLMs) in code reasoning through code execution tasks. CodeCrash targets deeper comprehension by applying logic-preserving structural changes and misleading textual cues to real code. We systematically perturb two established benchmarks — CRUXEval and LiveCodeBench — with controlled distractions, and evaluate 17 LLMs across input prediction and code execution tasks. CodeCrash reveals key failure modes in modern LLMs and large reasoning models (LRMs), including overreliance on natural language cues in LLMs and reasoning collapse in QwQ-32B.
+<center>
+<img src="https://github.com/DonaldLamNL/codecrash_temp/blob/main/codecrash.svg?raw=true" alt="CodeCrash">
+</center>
 
-## Installation
+
+## 🧠 Introduction
+CodeCrash provides a unified stress-testing benchmark for evaluating the robustness of Large Language Models (LLMs) in code reasoning through code execution tasks. CodeCrash targets deeper comprehension by applying logic-preserving structural changes and misleading textual cues to real code. We systematically perturb two established benchmarks — CRUXEval and LiveCodeBench — with controlled distractions, and evaluate **17** LLMs across input prediction and code execution tasks. CodeCrash reveals key failure modes in modern LLMs and large reasoning models (LRMs), including overreliance on natural language cues in LLMs and reasoning collapse in QwQ-32B.
+
+## 🛠️ Installation
 ```bash
 git clone https://cuhk-arise.github.io/CodeCrash/
 cd CodeCrash
+conda create -n codecrash python=3.10
+conda activate codecrash
 pip install -r requirements.txt
 ```
 
-## Load Perturbed Data
+## 🎭 Perturbations
+In CodeCrash, we prepared three kinds of perturbations
 
-We prepared 7 types of perturbations:
-- REN: Renaming Entities
-- RTF: Reformatting Conditional Expressions
-- GBC: Inserting Garbage Code Segments
-- ALL: Aggregated Structural Perturbation
-- MDC: Misleading Descriptive Comments Perturbation
-- MPS: Misleading Print Statements Perturbatione
-- MHC: Misleading Incorrect Hint Comments Perturbation
+| Tag | Full Name | Type |
+|:------|:-------------|:-----------------|
+| `REN` | **Renaming Entities** | Structural |
+| `RTF` | **Reformatting Conditional Expressions** | Structural |
+| `GBC` | **Inserting Garbage Code Segments** | Structural |
+| `PSC_ALL` | **Aggregated Structural Perturbation** | Structural |
+| `MCC` | **Misleading Code Comments** | Contextual-Level |
+| `MPS` | **Misleading Print Statements** | Contextual-Level |
+| `MHC` | **Misleading Hint Comments** | Reasoning-Level |
 
-### Load Perturbed CRUXEval Data
-```py
-from loader import Crux
+> [!Tip]
+>
+> See the [🎭 Perturbations Introduction](ADVANCED_USAGE.md#-perturbations-introduction) section for example usage for each perturbation.
 
-crux_van = Crux()    # Load VAN code
-crux_mdc_output = Crux.load_perturb("MDC", "output")    # Load MDC-perturbed code for code execution (output prediction)
-crux_mhc_input = Crux.load_perturb("MHC", "input")    # Load MHC-perturbed code for input prediction
+
+
+### 🚀 Quick Start — Perturb a Dataset
+```bash
+# Apply a perturbation to a pre-defined dataset
+python perturb.py \
+    --dataset [crux|lcb] \
+    --perturbation [REN|RTF|GBC|PSC_ALL|MCC|MPS] \
+    --output-name "perturbed_dataset"
+
+# Apply MHC perturbation using GPT-4o to a customized dataset
+python perturb.py \
+    --dataset-path ".../crux.jsonl" \
+    --perturbation MHC \
+    --model "gpt-4o" \
+    --platform [openai|anthropic|gemini|azure|deepinfra|deepseek|qwen|sglang] \
+    --task [input|output] \
+    --output-name "crux_mhc" \
+    --max-workers 5
 ```
 
-### Load Perturbed LiveCodeBench (Code Execution Scenario) Data
-```py
-from loader import LiveCodeBench
+> [!Tip]
+>
+> See the [🚀 Perturb a Dataset](ADVANCED_USAGE.md#-perturb-a-dataset) section for more details.
 
-crux_van = LiveCodeBench()    # Load vanilla code
-crux_ren_output = LiveCodeBench.load_perturb("MDRENC", "output")    # Load REN-perturbed code for code execution
+- All perturbed datasets are saved in the `customize_datasets` directory.
+
+- 📁 Folder Structure:
+    ```
+    customize_datasets/
+    └── {output_name}.jsonl/
+    ```
+
+
+### 🧪 Quick Start — Evaluate a Model
+```bash
+python process.py \
+    --dataset [crux|lcb] \
+    --perturbation [VAN|REN|RTF|GBC|PSC_ALL|MCC|MPS|MHC] \
+    --model "gpt-4o-mini" \
+    --platform [openai|anthropic|gemini|azure|deepinfra|deepseek|qwen|sglang] \
+    --task [input|output] \
+    --infer-mode [direct|cot] \
+    --num-samples 2 \
+    --max-workers 10 \
+    --load-existing \
+    --evaluate
 ```
 
-### Load (Customized) Perturbed Data from Local
-```py
-from loader import Crux, LiveCodeBench
+> [!Tip]
+>
+> See the [🧪 Evaluate a Model](ADVANCED_USAGE.md#-evaluate-a-model) section for more details.
 
-data = Crux.load_file("<file_path>")
-data = LiveCodeBench.load_file("<file_path>")
+- All results are saved in the `results` directory.
+
+- Generated outputs are stored as `{dataset}_{task}_{perturbation}_{infer_mode}.jsonl` unless `--output-name` is specified.
+
+- Evaluation results are saved as `{dataset}_{task}_{perturbation}_{infer_mode}_eval.json` or `{output_name}_eval.json`.
+
+- 📁 Folder Structure:
+    ```
+    results/
+    └── {model_folder_name}/
+        └── {output_name}.jsonl
+        └── {output_name}_eval.json
+    ```
+
+## 🔑 API Access & Configuration
+All experiments were conducted through API access (including [OpenAI](https://platform.openai.com/docs/overview), [Anthropic](https://console.anthropic.com/login?returnTo=%2F%3F), [Gemini](https://aistudio.google.com), [AzureChat](https://azure.microsoft.com/en-us/get-started/azure-portal), [DeepInfra](https://deepinfra.com), [DeepSeek](https://platform.deepseek.com), and [Qwen](https://qwen.ai/home)), as well as via SGLang, which allows you to deploy and host your locally trained or Hugging Face LLMs.
+
+To use these APIs, you must create an account and configure your API keys in an `.env` file.
+```bash
+OPENAI_API_KEY="<your_openai_api_key>"
+ANTHROPIC_API_KEY="<your_anthropic_api_key>"
+GEMINI_API_KEY="<your_gemini_api_key>"
+
+AZURE_OPENAI_API_KEY="<your_azure_openai_api_key>"
+AZURE_ENDPOINT="<your_azure_endpoint>"
+AZURE_VERSION="<your_azure_version>"
+
+DEEPINFRA_API_KEY="<your_deepinfra_api_key>"
+DEEPSEEK_API_KEY="<your_deepseek_api_key>"
+QWEN_API_KEY="<your_qwen_api_key>"
 ```
 
-### Load Data from huggingface
-```py
-from datasets import load_dataset
-crux_all_output = load_dataset("CUHK-ARISE/CodeCrash", data_files=f"crux_ALL_output.jsonl")["train"]
-crux_all_input = load_dataset("CUHK-ARISE/CodeCrash", data_files=f"crux_ALL_input.jsonl")["train"]
-lcb_all_output = load_dataset("CUHK-ARISE/CodeCrash", data_files=f"lcb_ALL_output.jsonl")["train"]
-```
+<!-- ## 💻 LLM-generated Code -->
 
-## Customize Perturbation
-```py
-from loader import Crux
-from llm import OpenAIChat
-from runner.runner import Runner
 
-van_data = Crux()   # Load the vanilla data
-model = OpenAIChat(model="gpt-4o")
-runner = Runner(van_data, model)
-
-# The perturbed dataset is stored at "./dataset_loader/customize"
-all_data = runner.process_structural_perturbation("save_file_name", "ALL")
-mdc_data = runner.process_textual_perturbation("save_file_name", "MDC")
-```
-
-## Experiment on Models
-see `demo.ipynb`
-
-## Citation
+## 📜 Citation
 
 ```bibtex
 @article{lam2025codecrash,
-  author={Man Ho Lam and Chaozheng Wang and Jen{-}tse Huang and Michael R. Lyu},
-  title={CodeCrash: Stress Testing LLM Reasoning under Structural and Semantic Perturbations},
-  journal={arXiv preprint arXiv:2504.14119},
-  year={2025}
+    author={Man Ho Lam and Chaozheng Wang and Jen{-}tse Huang and Michael R. Lyu},
+    title={CodeCrash: Stress Testing LLM Reasoning under Structural and Semantic Perturbations},
+    journal={arXiv preprint arXiv:2504.14119},
+    year={2025}
 }
 ```
+
+## 🙏 Acknowledgement
+- [Code TREAT](https://code-treat.vercel.app/#home)

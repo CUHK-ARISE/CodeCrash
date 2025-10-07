@@ -6,13 +6,13 @@ from llm.format import Message
 from dotenv import load_dotenv
 load_dotenv(override=True)
 
+
 class LLMChat():
     DEFAULT_MAX_TOKENS = 1024
     DEFAULT_TEMPERATURE = 0.2
     DEFAULT_DELAY = 0
     DEFAULT_TOP_P = 0.95
     DEFAULT_STREAM = False
-    DEFAULT_REASON = False
     DEFAULT_TIMEOUT = 120
 
     def __init__(self, model_name: str, **kwargs) -> None:
@@ -24,10 +24,11 @@ class LLMChat():
         5. max_n
         6. stream
         7. timeout
-        8. no_system_prompt
         """
         self.model_name = model_name
-        self.folder_name = kwargs.get("folder_name", model_name.split("/")[-1])
+        self.folder_name = kwargs.get("folder_name")
+        if self.folder_name is None:
+            self.folder_name = model_name.replace("/", "-")
         self.max_tokens = kwargs.get("max_tokens", self.DEFAULT_MAX_TOKENS)
         self.temperature = kwargs.get("temperature", self.DEFAULT_TEMPERATURE)
         self.top_p = kwargs.get("top_p", self.DEFAULT_TOP_P)
@@ -35,29 +36,29 @@ class LLMChat():
         self.max_n = kwargs.get("max_n")
         self.stream = kwargs.get("stream", self.DEFAULT_STREAM)
         self.timeout = kwargs.get("timeout", self.DEFAULT_TIMEOUT)
-        self.no_system_prompt = kwargs.get("no_system_prompt", False)
-        self.reasoning = kwargs.get("reasoning", self.DEFAULT_REASON)
-        self.effort = kwargs.get("effort", False)
 
+    
     def get_openai_conf(self, n: int) -> dict[str]:
         n = min(self.max_n, n) if self.max_n else n
         n = 1 if self.stream else n
         
-        config = {
-            "n": n,
-            "max_tokens": self.max_tokens,
-            "temperature": self.temperature,
-            "top_p": self.top_p,
-            "timeout": self.timeout,
-        }
-        
-        if self.model_name in ["o1", "o3-mini"]:
-            config.pop("temperature", None)
-            config.pop("top_p", None)
-            config.pop("max_tokens", None)
-            config["max_completion_tokens"] = self.max_tokens
+        if self.model_name in ["o1", "o3", "o3-mini", "o4-mini", "gpt-5", "gpt-5-mini", "gpt-5-nano"]:
+            config = {
+                "n": n,
+                "max_completion_tokens": self.max_tokens,
+                "timeout": self.timeout,
+            }
+        else:
+            config = {
+                "n": n,
+                "max_tokens": self.max_tokens,
+                "temperature": self.temperature,
+                "top_p": self.top_p,
+                "timeout": self.timeout,
+            }
         return config
 
+    
     def get_gemini_conf(self, n: int) -> dict[str]:
         if self.max_n: n = min(self.max_n, n)
         return {
@@ -65,6 +66,7 @@ class LLMChat():
             "max_output_tokens": self.max_tokens,
             "temperature": self.temperature,
         }
+    
     
     def get_anthropic_conf(self, system_msg: str = None) -> dict[str]:
         config = {

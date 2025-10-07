@@ -1,9 +1,9 @@
 import os
 import time
+import anthropic
 from typing import List, Union, Optional, Tuple
 from tenacity import (retry, stop_after_attempt, wait_random_exponential)
 
-import anthropic
 from llm import LLMChat, Message
 
 class AnthropicChat(LLMChat):

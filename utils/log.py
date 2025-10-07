@@ -1,6 +1,5 @@
 from colorama import Fore, Style
 
-
 # Dictionary with additional color options
 color_dict = {
     "r": Fore.RED,
