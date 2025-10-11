@@ -75,7 +75,7 @@ python perturb.py \
     ```
 
 
-### 🧪 Quick Start — Generate Model Outputs
+### 🧪 Quick Start — Generate and Evaluate
 ```bash
 # Run perturbation experiments wth evaluation
 python process.py \
@@ -134,9 +134,6 @@ DEEPINFRA_API_KEY="<your_deepinfra_api_key>"
 DEEPSEEK_API_KEY="<your_deepseek_api_key>"
 QWEN_API_KEY="<your_qwen_api_key>"
 ```
-
-<!-- ## 💻 LLM-generated Code -->
-
 
 ## 📜 Citation
 
