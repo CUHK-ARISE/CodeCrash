@@ -99,7 +99,7 @@ python eval.py \
 
 > [!Tip]
 >
-> See the [🧪 Evaluate a Model](ADVANCED_USAGE.md#-generate-outputs) section for more details.
+> See the [🧪 Generate Outputs](ADVANCED_USAGE.md#-generate-outputs) section for more details.
 >
 > See the [📊 Evaluate a File](ADVANCED_USAGE.md#-evaluate-a-file) section for more details.
 
