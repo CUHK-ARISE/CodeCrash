@@ -1,5 +1,5 @@
 # CodeCrash
-Official repository for the paper "CodeCrash: Stress-Testing LLM Code Reasoning under Misleading Natural Language Perturbations"
+Official repository for the paper "CodeCrash: Exposing LLM Fragility to Misleading Natural Language in Code Reasoning"
 
 <p align="center">
     <a href="https://cuhk-arise.github.io/CodeCrash/">🏠 Home Page</a> •
