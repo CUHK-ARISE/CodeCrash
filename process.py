@@ -204,6 +204,6 @@ if __name__ == "__main__":
     
     if args.evaluate:
         print("Processing completed. Starting evaluation...")
-        evaluate_solution(filepath=filepath)
+        evaluate_solution(filepath=filepath, task=task, max_workers=max_workers)
     
     print("======================================================================")

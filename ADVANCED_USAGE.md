@@ -57,7 +57,7 @@ Choose **one** of the following:
 
 
 
-## 🧪 Evaluate a Model
+## 🧪 Generate Outputs
 
 Below are all the arguments for `process.py` for the remote evaluation:
 ```bash
@@ -128,6 +128,17 @@ Choose **one** of the following (mutually exclusive):
 | Argument | Type | Default | Description |
 |----------|------|---------|-------------|
 | `--evaluate` | `flag` | `False` | Auto-evaluate after generation |
+
+
+## 📊 Evaluate a File
+
+### General Settings
+| Argument | Type | Default | Description |
+|----------|------|---------|-------------|
+| `--filepath` | `str` | **Required** | Path to the generated result file |
+| `--task` | `str` | **Required** | `input` or `output` prediction |
+| `--max-workers` | `int` | `10` | Parallel worker threads |
+
 
 
 ## 🎭 Perturbations Introduction

@@ -3,22 +3,26 @@ import json
 import numpy as np
 from tqdm import tqdm
 from typing import Dict, Any, Optional
+from utils.format import Task
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 from evaluate.execute import verify_correctness
 
 
-def evaluate_single_solution(code: str, function_name: str, function_call: str, output: Any, sol: str, timeout: int) -> bool:
-    if function_name in sol:
+def evaluate_single_solution(task: Task, code: str, function_call: str, output: Any, sol: str, timeout: int) -> bool:
+    if task == Task.INPUT_PREDICTION:
         expr = f"assert {sol} == {output}"
-    else:
+    elif task == Task.OUTPUT_PREDICTION:
         expr = f"assert {function_call} == {sol}"
+    else:
+        raise ValueError(f"Unknown task: {task}")
     result = verify_correctness(code=code, test=expr, timeout=timeout)
     return result["status"] == "passed"
 
 
 def evaluate_solution(
     filepath: str,
+    task: Task,
     output_file: Optional[str] = None,
     timeout: int = 60,
     max_workers: int = 10
@@ -49,8 +53,8 @@ def evaluate_solution(
         futures = {
             executor.submit(
                 evaluate_single_solution,
+                task,
                 entry["code"],
-                entry["function_name"],
                 entry["function_call"],
                 entry["output"],
                 sol,

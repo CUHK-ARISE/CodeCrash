@@ -6,7 +6,7 @@ class Perturbation(str, Enum):
     REN = "REN"         # Renaming Entities
     RTF = "RTF"         # Reformatting Conditional Expressions
     GBC = "GBC"         # Inserting Garbage Code
-    PSC_ALL = "ALL"     # Aggregated Structural Perturbation
+    PSC_ALL = "PSC_ALL"     # Aggregated Structural Perturbation
     MCC = "MCC"         # Misleading Code Comments
     MPS = "MPS"         # Misleading Print Statements
     MHC = "MHC"         # Misleading Hint Comments

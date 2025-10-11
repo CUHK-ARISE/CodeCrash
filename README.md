@@ -49,16 +49,16 @@ In CodeCrash, we prepared three kinds of perturbations
 python perturb.py \
     --dataset [crux|lcb] \
     --perturbation [REN|RTF|GBC|PSC_ALL|MCC|MPS] \
-    --output-name "perturbed_dataset"
+    --output-name "<output_name>"
 
 # Apply MHC perturbation using GPT-4o to a customized dataset
 python perturb.py \
     --dataset-path ".../crux.jsonl" \
     --perturbation MHC \
-    --model "gpt-4o" \
+    --model "<model_name>" \
     --platform [openai|anthropic|gemini|azure|deepinfra|deepseek|qwen|sglang] \
     --task [input|output] \
-    --output-name "crux_mhc" \
+    --output-name "<output_name>" \
     --max-workers 5
 ```
 
@@ -75,12 +75,13 @@ python perturb.py \
     ```
 
 
-### 🧪 Quick Start — Evaluate a Model
+### 🧪 Quick Start — Generate Model Outputs
 ```bash
+# Run perturbation experiments wth evaluation
 python process.py \
     --dataset [crux|lcb] \
     --perturbation [VAN|REN|RTF|GBC|PSC_ALL|MCC|MPS|MHC] \
-    --model "gpt-4o-mini" \
+    --model "<model_name>" \
     --platform [openai|anthropic|gemini|azure|deepinfra|deepseek|qwen|sglang] \
     --task [input|output] \
     --infer-mode [direct|cot] \
@@ -88,11 +89,19 @@ python process.py \
     --max-workers 10 \
     --load-existing \
     --evaluate
+
+#  Evaluate a saved output file independently
+python eval.py \
+    --filepath "<filepath>" \
+    --task [input|output] \
+    --max_workers 10
 ```
 
 > [!Tip]
 >
-> See the [🧪 Evaluate a Model](ADVANCED_USAGE.md#-evaluate-a-model) section for more details.
+> See the [🧪 Evaluate a Model](ADVANCED_USAGE.md#-generate-outputs) section for more details.
+>
+> See the [📊 Evaluate a File](ADVANCED_USAGE.md#-evaluate-a-file) section for more details.
 
 - All results are saved in the `results` directory.
 
